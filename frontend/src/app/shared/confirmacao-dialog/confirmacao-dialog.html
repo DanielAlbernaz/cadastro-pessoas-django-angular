@@ -1,0 +1,18 @@
+<div class="overlay" (click)="cancelado.emit()">
+  <div
+    class="popup popup-centro"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="titulo-confirmacao"
+    (click)="$event.stopPropagation()"
+  >
+    <h3 id="titulo-confirmacao">{{ titulo() }}</h3>
+    <p class="mensagem">{{ mensagem() }}</p>
+    <div class="acoes acoes-popup">
+      <button type="button" class="btn" (click)="cancelado.emit()">Cancelar</button>
+      <button type="button" class="btn btn-perigo-cheio" (click)="confirmado.emit()">
+        {{ textoConfirmar() }}
+      </button>
+    </div>
+  </div>
+</div>

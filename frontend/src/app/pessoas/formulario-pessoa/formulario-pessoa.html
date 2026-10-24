@@ -1,0 +1,103 @@
+<div class="overlay">
+  <div class="popup popup-form" role="dialog" aria-modal="true" aria-labelledby="titulo-form">
+    <header class="popup-header">
+      <h3 id="titulo-form">{{ pessoa() ? 'Alterar pessoa' : 'Incluir pessoa' }}</h3>
+      <button type="button" class="fechar" (click)="cancelado.emit()" aria-label="Fechar">×</button>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+      <div class="grid">
+        <label class="campo col-2">
+          <span>Nome</span>
+          <input
+            formControlName="nome"
+            maxlength="150"
+            autocomplete="off"
+            [class.invalido]="mensagemErro('nome')"
+          />
+          @if (mensagemErro('nome'); as msg) {
+            <small class="erro">{{ msg }}</small>
+          }
+        </label>
+
+        <label class="campo">
+          <span>CPF</span>
+          <input
+            formControlName="cpf"
+            inputmode="numeric"
+            placeholder="000.000.000-00"
+            maxlength="14"
+            autocomplete="off"
+            (input)="aoDigitarCpf()"
+            [class.invalido]="mensagemErro('cpf')"
+          />
+          @if (mensagemErro('cpf'); as msg) {
+            <small class="erro">{{ msg }}</small>
+          }
+        </label>
+
+        <label class="campo">
+          <span>Data de nascimento</span>
+          <input
+            type="date"
+            formControlName="data_nasc"
+            [class.invalido]="mensagemErro('data_nasc')"
+          />
+          @if (mensagemErro('data_nasc'); as msg) {
+            <small class="erro">{{ msg }}</small>
+          }
+        </label>
+
+        <label class="campo">
+          <span>Altura (m)</span>
+          <input
+            type="number"
+            formControlName="altura"
+            step="0.01"
+            min="0.3"
+            max="3"
+            placeholder="1.75"
+            [class.invalido]="mensagemErro('altura')"
+          />
+          @if (mensagemErro('altura'); as msg) {
+            <small class="erro">{{ msg }}</small>
+          }
+        </label>
+
+        <label class="campo">
+          <span>Peso (kg)</span>
+          <input
+            type="number"
+            formControlName="peso"
+            step="0.1"
+            min="1"
+            max="500"
+            placeholder="70.5"
+            [class.invalido]="mensagemErro('peso')"
+          />
+          @if (mensagemErro('peso'); as msg) {
+            <small class="erro">{{ msg }}</small>
+          }
+        </label>
+
+        <fieldset class="campo col-2">
+          <span>Sexo</span>
+          <div class="opcoes" [class.invalido]="mensagemErro('sexo')">
+            <label><input type="radio" formControlName="sexo" value="M" /> Masculino</label>
+            <label><input type="radio" formControlName="sexo" value="F" /> Feminino</label>
+          </div>
+          @if (mensagemErro('sexo'); as msg) {
+            <small class="erro">{{ msg }}</small>
+          }
+        </fieldset>
+      </div>
+
+      <div class="acoes acoes-popup">
+        <button type="button" class="btn" (click)="cancelado.emit()">Cancelar</button>
+        <button type="submit" class="btn btn-primario" [disabled]="salvando()">
+          {{ pessoa() ? 'Salvar alterações' : 'Incluir' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

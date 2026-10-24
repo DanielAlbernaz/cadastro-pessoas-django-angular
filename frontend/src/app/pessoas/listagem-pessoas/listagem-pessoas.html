@@ -1,0 +1,156 @@
+<section class="card">
+  <header class="card-header">
+    <button
+      type="button"
+      class="btn btn-primario"
+      (click)="abrirInclusao()"
+      [disabled]="carregando()"
+    >
+      + Incluir pessoa
+    </button>
+  </header>
+
+  <form class="pesquisa" [formGroup]="filtro" (ngSubmit)="pesquisar()" novalidate>
+    <label class="campo">
+      <span>Pesquisar</span>
+      <input
+        type="search"
+        formControlName="busca"
+        maxlength="150"
+        autocomplete="off"
+        placeholder="Digite parte do nome ou do CPF"
+      />
+    </label>
+    <div class="pesquisa-acoes">
+      <button type="submit" class="btn" [disabled]="carregando()">Pesquisar</button>
+      <button type="button" class="btn" (click)="limparPesquisa()" [disabled]="carregando()">
+        Limpar
+      </button>
+    </div>
+  </form>
+
+  @if (resultados().length) {
+    <div class="tabela-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th class="num">ID</th>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Nascimento</th>
+            <th>Sexo</th>
+            <th class="num">Altura (m)</th>
+            <th class="num">Peso (kg)</th>
+            <th class="col-acoes">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of resultados(); track p.id) {
+            <tr>
+              <td class="num id">{{ p.id }}</td>
+              <td class="nome">{{ p.nome }}</td>
+              <td>{{ formatarCpf(p.cpf) }}</td>
+              <td>{{ formatarData(p.data_nasc) }}</td>
+              <td>{{ p.sexo === 'M' ? 'Masculino' : 'Feminino' }}</td>
+              <td class="num">{{ p.altura | number: '1.2-2' }}</td>
+              <td class="num">{{ p.peso | number: '1.1-2' }}</td>
+              <td class="col-acoes">
+                <div class="acoes-linha">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-destaque"
+                    (click)="calcularPesoIdeal(p)"
+                    [disabled]="carregando()"
+                    [attr.aria-label]="'Peso ideal de ' + p.nome"
+                  >
+                    Peso Ideal
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm"
+                    (click)="abrirAlteracao(p)"
+                    [disabled]="carregando()"
+                    [attr.aria-label]="'Alterar ' + p.nome"
+                  >
+                    Alterar
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-perigo"
+                    (click)="pedirExclusao(p)"
+                    [disabled]="carregando()"
+                    [attr.aria-label]="'Excluir ' + p.nome"
+                  >
+                    Excluir
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (paginacao(); as pg) {
+      <div class="rodape-lista">
+        <span>
+          Mostrando {{ (pg.pagina - 1) * pg.por_pagina + 1 }}–{{
+            (pg.pagina - 1) * pg.por_pagina + resultados().length
+          }}
+          de {{ pg.total }} registro(s){{ filtrado() ? ' encontrado(s)' : '' }}
+        </span>
+        @if (pg.total_paginas > 1) {
+          <div class="paginacao">
+            <button
+              type="button"
+              class="btn btn-sm"
+              (click)="irParaPagina(pg.pagina - 1)"
+              [disabled]="carregando() || pg.pagina === 1"
+            >
+              ‹ Anterior
+            </button>
+            <span>Página {{ pg.pagina }} de {{ pg.total_paginas }}</span>
+            <button
+              type="button"
+              class="btn btn-sm"
+              (click)="irParaPagina(pg.pagina + 1)"
+              [disabled]="carregando() || pg.pagina === pg.total_paginas"
+            >
+              Próxima ›
+            </button>
+          </div>
+        }
+      </div>
+    }
+  } @else if (pesquisou()) {
+    <div class="vazio">
+      @if (filtrado()) {
+        <p>Nenhuma pessoa encontrada para o filtro informado.</p>
+        <button type="button" class="btn btn-link" (click)="limparPesquisa()">Ver todas</button>
+      } @else {
+        <p>Nenhuma pessoa cadastrada ainda.</p>
+        <button type="button" class="btn btn-primario" (click)="abrirInclusao()">
+          + Incluir pessoa
+        </button>
+      }
+    </div>
+  }
+</section>
+
+@if (formularioAberto()) {
+  <app-formulario-pessoa [pessoa]="emEdicao()" (salvo)="aoSalvar()" (cancelado)="fecharPopups()" />
+}
+
+@if (pesoIdeal(); as resultado) {
+  <app-peso-ideal-popup [resultado]="resultado" (fechado)="fecharPopups()" />
+}
+
+@if (paraExcluir()) {
+  <app-confirmacao-dialog
+    titulo="Excluir registro"
+    mensagem="Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita."
+    textoConfirmar="Excluir"
+    (confirmado)="confirmarExclusao()"
+    (cancelado)="fecharPopups()"
+  />
+}

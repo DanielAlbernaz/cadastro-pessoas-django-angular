@@ -1,0 +1,14 @@
+<div class="toasts">
+  @for (t of toast.toasts(); track t.id) {
+    <div class="toast toast-{{ t.tipo }}" [attr.role]="t.tipo === 'erro' ? 'alert' : 'status'">
+      <span class="icone" aria-hidden="true">{{ t.tipo === 'sucesso' ? '✓' : '!' }}</span>
+      <div class="corpo">
+        <strong>{{ t.tipo === 'sucesso' ? 'Sucesso' : 'Erro' }}</strong>
+        <p>{{ t.texto }}</p>
+      </div>
+      <button type="button" class="fechar" (click)="toast.fechar(t.id)" aria-label="Fechar">
+        ×
+      </button>
+    </div>
+  }
+</div>
