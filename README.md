@@ -1,6 +1,6 @@
 # Cadastro de Pessoas: Django + Angular + PostgreSQL
 
-Prova técnica (Desenvolvedor Full Stack Python Pleno, Global Tech).
+Prova técnica (Desenvolvedor Full Stack Python Pleno).
 
 CRUD da entidade **Pessoa** com os botões **Incluir, Alterar, Excluir e Pesquisar**, mais o ponto extra
 **Peso Ideal**. O server é Django (API REST/JSON), e o client é Angular, separado do Django.
